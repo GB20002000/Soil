@@ -1,7 +1,14 @@
 // ======================================
 // HiveMQ Cloud Configuration
 // ======================================
+// ======================================
+// OpenWeatherMap Configuration
+// ======================================
 
+const WEATHER_API_KEY = "1a75e1f696cd42bb37ecc614bb268ac3";
+const WEATHER_CITY = "Coimbatore";
+// const WEATHER_CITY = "Chennai";
+const WEATHER_COUNTRY = "IN";
 const broker = "wss://0c9f54b8cca94ea59f8084125bdf6929.s1.eu.hivemq.cloud:8884/mqtt";
 
 const options = {
@@ -117,13 +124,11 @@ client.on("message", (topic, message) => {
     document.getElementById("soilStatus").innerHTML =
         data.soilStatus ?? "--";
 
-    // Temperature
-    document.getElementById("temp").innerHTML =
-        data.temperature ?? "--";
+document.getElementById("temp").innerHTML =
+    data.temperature + " °C";
 
-    // Humidity
-    document.getElementById("humidity").innerHTML =
-        data.humidity ?? "--";
+document.getElementById("humidity").innerHTML =
+    data.humidity + " %";
 
     // Pump Status
     document.getElementById("pumpText").innerHTML =
@@ -202,28 +207,86 @@ document.getElementById("offBtn").addEventListener("click", () => {
 
 function updateClock()
 {
+
     const now = new Date();
 
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    let seconds = now.getSeconds();
+    let hour = now.getHours();
 
-    let ampm = hours >= 12 ? "PM" : "AM";
+    let minute = now.getMinutes();
 
-    hours = hours % 12;
-    hours = hours ? hours : 12;   // 0 becomes 12
+    let second = now.getSeconds();
 
-    hours = String(hours).padStart(2,'0');
-    minutes = String(minutes).padStart(2,'0');
-    seconds = String(seconds).padStart(2,'0');
+    const ampm = hour >= 12 ? "PM" : "AM";
+
+    hour = hour % 12;
+
+    hour = hour ? hour : 12;
+
+    hour = String(hour).padStart(2,'0');
+
+    minute = String(minute).padStart(2,'0');
+
+    second = String(second).padStart(2,'0');
 
     document.getElementById("clock").innerHTML =
-        `${hours}:${minutes}:${seconds} ${ampm}`;
+        `${hour}:${minute}:${second} ${ampm}`;
+
+    document.getElementById("currentDate").innerHTML =
+        now.toLocaleDateString('en-IN',
+        {
+            weekday:'long',
+            day:'2-digit',
+            month:'long',
+            year:'numeric'
+        });
+
 }
 
-setInterval(updateClock,1000);
-updateClock();
+updateClock();  
 
+setInterval(updateClock,1000);
+
+
+// ======================================
+// Weather API
+// ======================================
+
+async function loadWeather() {
+
+    try {
+
+        const url =
+            `https://api.openweathermap.org/data/2.5/weather?q=${WEATHER_CITY},${WEATHER_COUNTRY}&appid=${WEATHER_API_KEY}&units=metric`;
+
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        if (data.cod != 200) {
+            document.getElementById("weather").innerHTML = "Weather Error";
+            return;
+        }
+
+        document.getElementById("weather").innerHTML =
+            `${Math.round(data.main.temp)}°C | ${data.weather[0].main}`;
+
+    }
+    catch (err) {
+
+        console.log(err);
+
+        document.getElementById("weather").innerHTML =
+            "Weather Offline";
+
+    }
+
+}
+
+// Load once
+loadWeather();
+
+// Refresh every 10 minutes
+setInterval(loadWeather, 600000);
 
 //==============================
 // Theme Toggle
