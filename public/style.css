@@ -1,0 +1,394 @@
+/* ===========================================
+   Smart Drip Irrigation Dashboard
+   style.css
+=========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:#fff;
+    min-height:100vh;
+    padding:20px;
+}
+
+.container{
+    max-width:1400px;
+    margin:auto;
+}
+
+/* ================= HEADER ================= */
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    padding:20px;
+    background:rgba(255,255,255,.08);
+    border-radius:18px;
+    backdrop-filter:blur(10px);
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.logo i{
+    font-size:55px;
+    color:#3ddc84;
+}
+
+.logo h1{
+    font-size:28px;
+    font-weight:600;
+}
+
+.logo p{
+    opacity:.8;
+}
+
+.wifi{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:600;
+}
+
+#wifiDot{
+    width:14px;
+    height:14px;
+    background:#00ff55;
+    border-radius:50%;
+    box-shadow:0 0 15px #00ff55;
+}
+
+/* ================= GRID ================= */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.grid2{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(450px,1fr));
+    gap:20px;
+    margin-bottom:20px;
+}
+
+/* ================= CARD ================= */
+
+.card{
+    background:rgba(255,255,255,.08);
+    border-radius:20px;
+    padding:25px;
+    backdrop-filter:blur(12px);
+    box-shadow:0 10px 25px rgba(0,0,0,.30);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.card h2{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+    color:#ffffff;
+}
+
+/* ================= CIRCLE ================= */
+
+.circle{
+    width:170px;
+    height:170px;
+    margin:15px auto;
+    border-radius:50%;
+    border:12px solid #32d583;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:34px;
+    font-weight:bold;
+    box-shadow:0 0 30px rgba(50,213,131,.4);
+}
+
+/* ================= PROGRESS ================= */
+
+.progress{
+    width:100%;
+    height:14px;
+    background:#1e293b;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:20px;
+}
+
+#soilBar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#00ff88,#00bcd4);
+    transition:.5s;
+}
+
+/* ================= BIG NUMBER ================= */
+
+.bigNumber{
+    text-align:center;
+    font-size:70px;
+    font-weight:bold;
+    margin-top:30px;
+}
+
+.bigNumber small{
+    font-size:28px;
+}
+
+/* ================= STATUS ================= */
+
+#soilStatus{
+    text-align:center;
+    margin-top:20px;
+    font-size:24px;
+}
+
+/* ================= PUMP ================= */
+
+.pumpStatus{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    margin:25px 0;
+}
+
+#pumpIndicator{
+    width:22px;
+    height:22px;
+    background:red;
+    border-radius:50%;
+    box-shadow:0 0 15px red;
+}
+    
+#pumpText{
+    font-size:26px;
+    font-weight:bold;
+}
+
+/* ================= BUTTONS ================= */
+
+.buttons{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+}
+
+button{
+    border:none;
+    padding:14px 30px;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+    transition:.3s;
+    color:white;
+}
+
+#onBtn{
+    background:#00c853;
+}
+
+#offBtn{
+    background:#e53935;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+/* ================= TIMER ================= */
+
+.timer{
+    text-align:center;
+    font-size:46px;
+    font-weight:bold;
+    margin:30px 0;
+}
+
+.card p{
+    text-align:center;
+}
+
+/* ================= SWITCH ================= */
+
+.switch{
+    display:flex;
+    justify-content:center;
+    margin-top:25px;
+}
+
+.toggle{
+    position:relative;
+    width:70px;
+    height:36px;
+}
+
+.toggle input{
+    display:none;
+}
+
+.slider{
+    position:absolute;
+    cursor:pointer;
+    inset:0;
+    background:#888;
+    border-radius:50px;
+    transition:.4s;
+}
+
+.slider::before{
+    content:"";
+    position:absolute;
+    width:28px;
+    height:28px;
+    left:4px;
+    top:4px;
+    background:white;
+    border-radius:50%;
+    transition:.4s;
+}
+
+input:checked + .slider{
+    background:#00c853;
+}
+
+input:checked + .slider::before{
+    transform:translateX(34px);
+}
+
+#modeText{
+    text-align:center;
+    margin-top:20px;
+}
+
+/* ================= WATER TANK ================= */
+
+.tank{
+    width:140px;
+    height:240px;
+    border:5px solid #ffffff;
+    border-radius:12px;
+    margin:20px auto;
+    position:relative;
+    overflow:hidden;
+}
+
+#waterLevel{
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:0%;
+    background:linear-gradient(#00c6ff,#0072ff);
+    transition:.6s;
+}
+
+/* ================= REPORT ================= */
+
+.report{
+    display:flex;
+    justify-content:space-around;
+    margin-top:20px;
+    text-align:center;
+}
+
+.report h4{
+    margin-bottom:10px;
+}
+
+.report span{
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* ================= WEATHER ================= */
+
+.weather{
+    text-align:center;
+    font-size:28px;
+}
+
+.weather i{
+    font-size:60px;
+    margin:20px;
+    color:#ffd54f;
+}
+
+/* ================= CLOCK ================= */
+
+.clock{
+    text-align:center;
+    font-size:40px;
+    margin-top:20px;
+    font-weight:bold;
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+    margin-top:30px;
+    text-align:center;
+    opacity:.8;
+    padding:20px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:768px){
+
+    .grid2{
+        grid-template-columns:1fr;
+    }
+
+    header{
+        flex-direction:column;
+        gap:15px;
+        text-align:center;
+    }
+
+    .logo{
+        flex-direction:column;
+    }
+
+    .bigNumber{
+        font-size:50px;
+    }
+
+    .timer{
+        font-size:34px;
+    }
+
+    .clock{
+        font-size:30px;
+    }
+
+    .buttons{
+        flex-direction:column;
+    }
+
+    button{
+        width:100%;
+    }
+}
