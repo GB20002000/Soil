@@ -110,8 +110,8 @@ client.on("message", (topic, message) => {
         (data.soil ?? 0) + "%";
 
     // Water Tank
-    document.getElementById("waterLevel").style.height =
-        (data.soil ?? 0) + "%";
+    // document.getElementById("waterLevel").style.height =
+    //     (data.soil ?? 0) + "%";
 
     // Soil Status
     document.getElementById("soilStatus").innerHTML =
@@ -200,6 +200,27 @@ document.getElementById("offBtn").addEventListener("click", () => {
 
 });
 
+function updateClock() {
+
+    const now = new Date();
+
+    const options = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+
+    document.getElementById("currentTime").innerHTML =
+        now.toLocaleTimeString();
+
+    document.getElementById("currentDate").innerHTML =
+        now.toLocaleDateString('en-IN', options);
+}
+
+setInterval(updateClock, 1000);
+
+updateClock();
 // ======================================
 // AUTO / MANUAL
 // ======================================
