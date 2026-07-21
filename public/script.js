@@ -1,98 +1,94 @@
-const toggles = document.querySelectorAll(".toggle");
-const count = document.getElementById("count");
-const room1 = document.getElementById("room1");
-const ucount =document.getElementById("ucount");
-const billcount= document.getElementById("billcount");
-const room2=document.getElementById("room2");
-const Set_Value_Element = document.getElementById("Set_Value");
-const storedLastName = localStorage.getItem("lastname");
+// HiveMQ Cloud Details
+const broker = "0c9f54b8cca94ea59f8084125bdf6929.s1.eu.hivemq.cloud:8884/mqtt";
 
-if (storedLastName) {
-  Set_Value_Element.innerText = storedLastName;
-  
-}
-
-const broker = "wss://1fae4ab464e64fe9be19c16c1101c1be.s1.eu.hivemq.cloud:8884/mqtt";
 const options = {
-    clientId: "web_" + crypto.randomUUID(),
-    username: "Check",
-    password: "2025Black",
-    clean: true
+
+    username: "Soil_2026",
+
+    password: "Soil_2026",
+
+    reconnectPeriod: 2000
+
 };
 
 const client = mqtt.connect(broker, options);
 
+// Connected
 client.on("connect", () => {
-    console.log("Connected to HiveMQ Cloud");
-    client.subscribe("Switch");
-    client.subscribe("Switch2");
-    client.subscribe("Switch3");
-    client.subscribe("Alert1");
-    client.subscribe("Alert2");
+
+    console.log("Connected");
+
+    client.subscribe("smartirrigation/data");
+
 });
+
+// Receive Data
 client.on("message", (topic, message) => {
-    try {
-        const data = JSON.parse(message.toString());
-        const data1 =JSON.parse(message.toString());
-        const data2 = JSON.parse(message.toString());
-        const data3 = JSON.parse(message.toString());
-        const data4 = JSON.parse(message.toString());
-        if (topic === "Switch") {
-            count.innerHTML = `${data.voltage} ${data.Vunit}`;
-        }
-        else if(topic ==="Switch2")
-        {
-            ucount.innerHTML = `${data1.voltage} ${data.Vunit}`;
-        }
-        else if(topic ==="Switch3")
-        {
-            billcount.innerHTML = `${data2.voltage} ${data.Vunit}`;
-        }
-        else if(topic ==="Alert1")
-        {   
-            if(data3.voltage ===1)
-                {
-                    room1.innerHTML="PERSON DETECTED";
-                    room1.style.backgroundColor="blue";
-                    alert("Person detected in Room1");
-                }
-                else if(data3.voltage ===0)
-                    {
-                        room1.innerHTML="PERSON UNDETECTED";
-                        room1.style.backgroundColor="red";
-                    }
 
-            
-        }
-        else if(topic ==="Alert2")
-        {
-            if(data4.voltage ===1)
-                {
-                    room2.innerHTML="PERSON DETECTED";
-                    room2.style.backgroundColor="blue";
-                    alert("Person detected in Room2");
-                }
-                else if(data4.voltage ===0)
-                {
-                    room2.innerHTML="PERSON UNDETECTED";
-                    room2.style.backgroundColor="red";
-                }
-        }
+    const data = JSON.parse(message.toString());
 
-        
-    } catch (error) {
-        console.log("Received:", message.toString());
-        console.error(error);
+    document.getElementById("soilValue").innerHTML =
+        data.soil + "%";
+
+    document.getElementById("soilBar").style.width =
+        data.soil + "%";
+
+    document.getElementById("temp").innerHTML =
+        data.temperature;
+
+    document.getElementById("humidity").innerHTML =
+        data.humidity;
+
+    document.getElementById("soilStatus").innerHTML =
+        data.soilStatus;
+
+    document.getElementById("pumpText").innerHTML =
+        data.pump;
+
+    document.getElementById("timer").innerHTML =
+        data.pumpRuntime + " sec";
+
+    document.getElementById("todayWater").innerHTML =
+        data.waterUsage.toFixed(2) + " L";
+
+    document.getElementById("waterLevel").style.height =
+        data.soil + "%";
+
+    if(data.pump=="ON")
+    {
+        document.getElementById("pumpIndicator").style.background="#00ff00";
     }
-});
-client.publish("seet_value",storedLastName);
-document.addEventListener("DOMContentLoaded", function () {
-    toggles.forEach((toggle, index) => {
-        toggle.addEventListener("change", function () {
-            const state = toggle.checked ? "ON" : "OFF";
-            client.publish(`Led${index + 1}`, state);
-            console.log(`Led${index + 1} State:`, state);
-        });
-    });
+    else
+    {
+        document.getElementById("pumpIndicator").style.background="red";
+    }
 
 });
+
+// Pump ON
+document.getElementById("onBtn").onclick=function(){
+
+    client.publish("smartirrigation/pump","ON");
+
+}
+
+// Pump OFF
+document.getElementById("offBtn").onclick=function(){
+
+    client.publish("smartirrigation/pump","OFF");
+
+}
+
+// AUTO MODE
+document.getElementById("autoSwitch").onchange=function(){
+
+    if(this.checked)
+    {
+        client.publish("smartirrigation/mode","AUTO");
+    }
+    else
+    {
+        client.publish("smartirrigation/mode","MANUAL");
+    }
+
+}
