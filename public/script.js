@@ -11,6 +11,9 @@ const WEATHER_CITY = "Coimbatore";
 const WEATHER_COUNTRY = "IN";
 const broker = "wss://0c9f54b8cca94ea59f8084125bdf6929.s1.eu.hivemq.cloud:8884/mqtt";
 
+let previousPumpState = "OFF";
+let lastWateringTime = "00:00:00";
+
 const options = {
     clientId: "webclient_" + Math.random().toString(16).substring(2, 8),
     username: "Soil_2026",
@@ -34,8 +37,7 @@ client.on("connect", () => {
 
     console.log("✅ Connected to HiveMQ");
 
-    document.getElementById("wifiStatus").innerHTML = "ONLINE";
-    document.getElementById("wifiDot").style.background = "#00ff00";
+   updateConnectionStatus(true);
 
     client.subscribe("smartirrigation/data", (err) => {
 
@@ -67,8 +69,7 @@ client.on("offline", () => {
 
     console.log("MQTT Offline");
 
-    document.getElementById("wifiStatus").innerHTML = "OFFLINE";
-    document.getElementById("wifiDot").style.background = "red";
+updateConnectionStatus(false);
 
 });
 
@@ -84,6 +85,33 @@ client.on("error", (err) => {
 
 });
 
+
+// ======================================
+// MQTT Message Watchdog
+// ======================================
+
+let lastMessageTime = Date.now();
+const MESSAGE_TIMEOUT = 10000; // 10 seconds
+
+// ======================================
+// Convert Seconds to HH:MM:SS
+// ======================================
+
+function formatTime(totalSeconds) {
+
+    totalSeconds = Number(totalSeconds) || 0;
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return (
+        String(hours).padStart(2, "0") + ":" +
+        String(minutes).padStart(2, "0") + ":" +
+        String(seconds).padStart(2, "0")
+    );
+
+}
 // ======================================
 // Receive MQTT Data
 // ======================================
@@ -91,6 +119,8 @@ client.on("error", (err) => {
 client.on("message", (topic, message) => {
 
     let data;
+    lastMessageTime = Date.now();
+updateConnectionStatus(true);
 
     try {
 
@@ -130,29 +160,45 @@ document.getElementById("temp").innerHTML =
 document.getElementById("humidity").innerHTML =
     data.humidity + " %";
 
-    // Pump Status
-    document.getElementById("pumpText").innerHTML =
-        data.pump ?? "OFF";
+    // ======================================
+// Pump Status
+// ======================================
 
-    // Pump Indicator
-    if (data.pump === "ON") {
+// Display Pump Status
+document.getElementById("pumpText").innerHTML =
+    data.pump ?? "OFF";
 
-        document.getElementById("pumpIndicator").style.background = "#00ff00";
-        document.getElementById("pumpIndicator").style.boxShadow =
-            "0px 0px 15px #00ff00";
+// Save Last Watering Time when Pump changes from ON -> OFF
+if (previousPumpState === "ON" && data.pump === "OFF") {
 
-    }
-    else {
+    lastWateringTime = formatTime(data.pumpRuntime ?? 0);
 
-        document.getElementById("pumpIndicator").style.background = "red";
-        document.getElementById("pumpIndicator").style.boxShadow =
-            "0px 0px 15px red";
+    document.getElementById("lastWater").innerHTML =
+        lastWateringTime;
 
-    }
+}
 
-    // Timer
-    document.getElementById("timer").innerHTML =
-        (data.pumpRuntime ?? 0) + " sec";
+// Remember current pump state
+previousPumpState = data.pump ?? "OFF";
+
+// Pump Indicator
+if (data.pump === "ON") {
+
+    document.getElementById("pumpIndicator").style.background = "#00ff00";
+    document.getElementById("pumpIndicator").style.boxShadow =
+        "0px 0px 15px #00ff00";
+
+} else {
+
+    document.getElementById("pumpIndicator").style.background = "red";
+    document.getElementById("pumpIndicator").style.boxShadow =
+        "0px 0px 15px red";
+
+}
+
+// Current Pump Timer
+document.getElementById("timer").innerHTML =
+    formatTime(data.pumpRuntime ?? 0);
 
     // Water Usage
     document.getElementById("todayWater").innerHTML =
@@ -347,3 +393,46 @@ document.getElementById("autoSwitch").addEventListener("change", function () {
     }
 
 });
+
+function updateConnectionStatus(online) {
+
+    if (online) {
+
+        document.getElementById("wifiStatus").innerHTML = "ONLINE";
+        document.getElementById("wifiDot").style.background = "#00ff00";
+        document.getElementById("wifiDot").style.boxShadow =
+            "0 0 15px #00ff00";
+
+    } else {
+
+        document.getElementById("wifiStatus").innerHTML = "OFFLINE";
+        document.getElementById("wifiDot").style.background = "red";
+        document.getElementById("wifiDot").style.boxShadow =
+            "0 0 15px red";
+
+    }
+
+}
+
+// ======================================
+// Watch MQTT Message Timeout
+// ======================================
+
+setInterval(() => {
+
+    if (!client.connected) {
+
+        updateConnectionStatus(false);
+        return;
+
+    }
+
+    const diff = Date.now() - lastMessageTime;
+
+    if (diff > MESSAGE_TIMEOUT) {
+
+        updateConnectionStatus(false);
+
+    }
+
+}, 1000);
