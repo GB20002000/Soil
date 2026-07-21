@@ -1,61 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rectangular Box with Input</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      margin: 0;
-      padding: 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Drip Irrigation</title>
 
-    .container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    <link rel="stylesheet" href="style.css">
 
-    .box {
-      width: 300px;
-      height: 150px;
-      background-color: #4CAF50;
-      margin-right: 20px;
-      border-radius: 8px;
-    }
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    .input-box {
-      padding: 10px;
-      font-size: 1em;
-      width: 150px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-
-    .label {
-      font-size: 1.2em;
-      margin-right: 10px;
-    }
-  </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
+
 <body>
-  <div class="container">
-    <div class="box"></div>
-    <div>
-      <label for="valueInput" class="label">Enter value:</label>
-      <input type="text" id="valueInput" class="input-box" placeholder="Set Value"/>
-      <a href="./dashboard.html"><button type="button" onclick="sub()">submit</button></a>  
-    </div>
-  </div>
-  <script>
-    function sub(){
-        const typenum=document.getElementById("valueInput").value
-        console.log(typenum)    
-        localStorage.setItem("lastname",typenum);
-        
-    }
-  </script>
+
+<div class="container">
+
+    <!-- Header -->
+    <header>
+
+        <div class="logo">
+
+            <i class="fas fa-seedling"></i>
+
+            <div>
+                <h1>Smart Drip Irrigation</h1>
+                <p>ESP32 Monitoring Dashboard</p>
+            </div>
+
+        </div>
+
+        <div class="wifi">
+
+            <span id="wifiDot"></span>
+            <span id="wifiStatus">ONLINE</span>
+
+        </div>
+
+    </header>
+
+    <!-- Top Cards -->
+
+    <section class="grid">
+
+        <!-- Soil Moisture -->
+
+        <div class="card">
+
+            <h2>
+                <i class="fas fa-seedling"></i>
+                Soil Moisture
+            </h2>
+
+            <div class="circle">
+
+                <span id="soilValue">0%</span>
+
+            </div>
+
+            <div class="progress">
+
+                <div id="soilBar"></div>
+
+            </div>
+
+            <h3 id="soilStatus">Waiting...</h3>
+
+        </div>
+
+        <!-- Temperature -->
+
+        <div class="card">
+
+            <h2>
+                <i class="fas fa-temperature-high"></i>
+                Temperature
+            </h2>
+
+            <div class="bigNumber">
+
+                <span id="temp">0</span>
+
+                <small>°C</small>
+
+            </div>
+
+        </div>
+
+        <!-- Humidity -->
+
+        <div class="card">
+
+            <h2>
+
+                <i class="fas fa-droplet"></i>
+
+                Humidity
+
+            </h2>
+
+            <div class="bigNumber">
+
+                <span id="humidity">0</span>
+
+                <small>%</small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Pump -->
+
+    <section class="grid2">
+
+        <div class="card">
+
+            <h2>
+
+                <i class="fas fa-faucet"></i>
+
+                Pump Control
+
+            </h2>
+
+            <div class="pumpStatus">
+
+                <div id="pumpIndicator"></div>
+
+                <span id="pumpText">OFF</span>
+
+            </div>
+
+            <div class="buttons">
+
+                <button id="onBtn">
+                    ON
+                </button>
+
+                <button id="offBtn">
+                    OFF
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Timer -->
+
+        <div class="card">
+
+            <h2>
+
+                <i class="fas fa-stopwatch"></i>
+
+                Pump Timer
+
+            </h2>
+
+            <div class="timer">
+
+                <span id="timer">
+                    00:00:00
+                </span>
+
+            </div>
+
+            <p>
+
+                Total Watering Time
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- Auto Mode -->
+
+    <section class="grid2">
+
+        <div class="card">
+
+            <h2>
+
+                <i class="fas fa-robot"></i>
+
+                Auto Irrigation
+
+            </h2>
+
+            <div class="switch">
+
+                <label class="toggle">
+
+                    <input type="checkbox" id="autoSwitch">
+
+                    <span class="slider"></span>
+
+                </label>
+
+            </div>
+
+            <h3 id="modeText">
+
+                AUTO MODE
+
+            </h3>
+
+        </div>
+
+        <!-- Water Tank -->
+
+        <div class="card">
+
+            <h2>
+
+                <i class="fas fa-water"></i>
+
+                Water Tank
+
+            </h2>
+
+            <div class="tank">
+
+                <div id="waterLevel"></div>
+
+            </div>
+
+            <p id="tankText">
+
+                Water Level
+
+            </p>
+
+        </div>
+
+    </section>
+
+    <!-- Water Report -->
+
+    <section class="grid">
+
+        <div class="card">
+
+            <h2>
+
+                <i class="fas fa-chart-line"></i>
+
+                Water Report
+
+            </h2>
+
+            <div class="report">
+
+                <div>
+
+                    <h4>Today's Usage</h4>
+
+                    <span id="todayWater">
+
+                        0 L
+
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <h4>Last Watering</h4>
+
+                    <span id="lastWater">
+
+                        --
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Weather -->
+
+        <div class="card">
+
+            <h2>
+
+                <i class="fas fa-cloud-sun"></i>
+
+                Weather
+
+            </h2>
+
+            <div class="weather">
+
+                <i class="fas fa-cloud"></i>
+
+                <span id="weather">
+
+                    Loading...
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- Time -->
+
+        <div class="card">
+
+            <h2>
+
+                <i class="fas fa-clock"></i>
+
+                Current Time
+
+            </h2>
+
+            <div class="clock">
+
+                <span id="clock">
+
+                    00:00:00
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Footer -->
+
+    <footer>
+
+        Designed by <b>GB Embedded Systems</b>
+
+    </footer>
+
+</div>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
+<script src="script.js"></script>
+
+
 </body>
 </html>
