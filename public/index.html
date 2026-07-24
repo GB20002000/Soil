@@ -276,27 +276,55 @@
 
         <div class="card">
 
-            <h2>
+    <h2>
+        <i class="fas fa-cloud-sun"></i>
+        Weather Forecast
+    </h2>
 
-                <i class="fas fa-cloud-sun"></i>
+    <div class="weather">
 
-                Weather
+        <i class="fas fa-cloud"></i>
 
-            </h2>
+        <div id="weather">
+            Loading...
+        </div>
 
-            <div class="weather">
+        <br>
 
-                <i class="fas fa-cloud"></i>
+        <h3>Next Forecast (3 Hour)</h3>
 
-                <span id="weather">
+        <div id="nextHourWeather">
+            --
+        </div>
 
-                    Loading...
+        <br>
 
-                </span>
+        <h3>Rain Probability</h3>
 
-            </div>
+        <div class="rainProgress">
+
+            <div id="rainBar"></div>
 
         </div>
+
+        <div id="rainPercent">
+            0%
+        </div>
+
+        <br>
+
+        <h3>AI Recommendation</h3>
+
+        <div id="aiAdvice">
+
+            Waiting...
+
+        </div>
+        
+
+    </div>
+
+</div>
 
         
 
@@ -319,6 +347,31 @@
             Monday, 21 July 2026
         </div>
 
+        <hr class="weatherLine">
+
+<div class="sunInfo">
+
+    <div class="sunCard">
+
+        <i class="fas fa-sun" style="color:#FFD54F;"></i>
+
+        <h4>Sunrise</h4>
+
+        <span id="sunrise">--:--</span>
+
+    </div>
+
+    <div class="sunCard">
+
+        <i class="fas fa-moon" style="color:#FFA726;"></i>
+
+        <h4>Sunset</h4>
+
+        <span id="sunset">--:--</span>
+
+    </div>
+
+</div>
     </div>
 
 </div>
